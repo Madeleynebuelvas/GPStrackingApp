@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ETUrl"
-            android:text="http://www.servidor.com/"
+            android:text="46.101.237.203"
             android:layout_weight="0.59" />
 
         <EditText
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/ETPuerto"
             android:layout_weight="0.41"
-            android:text="80" />
+            android:text="9000" />
 
     </LinearLayout>
 
@@ -88,7 +88,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enviar POST"
+            android:text="Enviar UDP"
             android:id="@+id/sendPost"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"

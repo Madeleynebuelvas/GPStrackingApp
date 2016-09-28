@@ -9,10 +9,25 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -21,6 +36,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -114,6 +133,7 @@ public class Principal extends AppCompatActivity implements LocationListener {
 
 
     private class PostClass extends AsyncTask<String, Void, Void> {
+        String response = "";
 
         private final Context context;
 
@@ -132,59 +152,23 @@ public class Principal extends AppCompatActivity implements LocationListener {
 
         @Override
         protected Void doInBackground(String... params) {
+            String host="";
+            int port=0;
             try {
+                 host = params[0];
+                 port = Integer.parseInt(params[1]);
+                Socket socket = new Socket(host, port);
+                OutputStream outstream = socket .getOutputStream();
+                PrintWriter out = new PrintWriter(outstream);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 
-                final TextView outputView = (TextView) findViewById(R.id.showOutput);
-                URL url = new URL(params[0]+":"+params[1]);
+                String toSend = params[3]+"@"+params[2]+"@"+timeStamp;
 
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                out.print(toSend );
+            } catch (UnknownHostException e) {
 
-                String urlParameters = params[2]+"="+params[3]+"&"+params[4]+"="+params[5];
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
-                connection.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
-                connection.setDoOutput(true);
-                DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
-                dStream.writeBytes(urlParameters);
-                dStream.flush();
-                dStream.close();
-                int responseCode = connection.getResponseCode();
-
-                System.out.println("\nSending 'POST' request to URL : " + url);
-                System.out.println("Post parameters : " + urlParameters);
-                System.out.println("Response Code : " + responseCode);
-
-                final StringBuilder output = new StringBuilder("Request URL " + url);
-                output.append(System.getProperty("line.separator") + "Request Parameters " + urlParameters);
-                output.append(System.getProperty("line.separator")  + "Response Code " + responseCode);
-                output.append(System.getProperty("line.separator")  + "Type " + "POST");
-                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line = "";
-                StringBuilder responseOutput = new StringBuilder();
-                System.out.println("output===============" + br);
-                while((line = br.readLine()) != null ) {
-                    responseOutput.append(line);
-                }
-                br.close();
-
-                output.append(System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") + responseOutput.toString());
-
-                Principal.this.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        outputView.setText(output);
-                        progress.dismiss();
-                    }
-                });
-
-
-            } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
             }
             return null;
         }
@@ -217,6 +201,7 @@ public class Principal extends AppCompatActivity implements LocationListener {
                 URL url = new URL(params[0]+":"+params[1]);
 
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                String prueba=">REV051910172612+1098995-0748262500000012;ID=ENOMOTO<\\r\\n";
 
                 String urlParameters = params[2]+"="+params[3]+"&"+params[4]+"="+params[5];
                 connection.setRequestMethod("GET");
